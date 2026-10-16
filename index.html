@@ -192,12 +192,8 @@
     </div>
 
     <script>
-        // لینک اکسل آنلاین گوگل شیت شما
+        // لینک گوگل شیت آنلاین شما
         const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxijCdVt_QbbT5EsuSQ1XFjjBp2MEmqbuMgXtX31pVm7AIbhD1SFdmVX2oPpB8CESFE/exec";
-        
-        // تنظیمات قطعی ربات تلگرام و آیدی عددی امیرحسین
-        const TELEGRAM_BOT_TOKEN = "8827329914:AAFvJCRGF4tLA77NN0xqwGW0sVTmmqHiMN4";
-        const TELEGRAM_CHAT_ID = "7255359815";
 
         async function submitOrder() {
             const name = document.getElementById('client-name').value.trim();
@@ -214,41 +210,29 @@
             submitBtn.disabled = true;
             statusBox.style.display = 'block';
             statusBox.className = 'status-box success';
-            statusBox.innerHTML = '⏳ در حال ارسال اطلاعات به اکسل آنلاین و نوتیفیکیشن تلگرام...';
+            statusBox.innerHTML = '⏳ در حال ارسال اطلاعات به اکسل و ارسال پیام به تلگرام...';
 
             try {
-                // ۱. ارسال به اکسل آنلاین (Google Sheets)
                 const formData = new URLSearchParams();
                 formData.append('name', name);
                 formData.append('phone', phone);
                 formData.append('service', service);
 
+                // ارسال به سرور گوگل (که همزمان اکسل رو پر می‌کنه و هم پیام تلگرام رو می‌فرسته)
                 await fetch(GOOGLE_SHEET_WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: formData
                 });
 
-                // ۲. ارسال نوتیفیکیشن به ربات تلگرام
-                const telegramMessage = `🔔 سفارش جدید در MGTR Web Studio!\n\n👤 نام مشتری: ${name}\n📞 شماره تماس: ${phone}\n🛠️ سفارش: ${service}\n⏰ زمان: ${new Date().toLocaleString('fa-IR')}`;
-                
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: telegramMessage
-                    })
-                });
-
-                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت ثبت شد!</strong><br>📊 اطلاعات در اکسل ذخیره شد و <strong>تلگرامت</strong> زنگ خورد! 🎉`;
+                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت ثبت شد!</strong><br>📊 هم توی اکسل نشست و هم <strong>تلگرامت</strong> زنگ خورد! 🎉`;
                 
                 document.getElementById('client-name').value = '';
                 document.getElementById('client-phone').value = '';
                 submitBtn.disabled = false;
 
             } catch (error) {
-                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت ثبت شد!</strong><br>🎉 بررسی کن، ردیف جدید در گوگل شیت نشست.`;
+                statusBox.innerHTML = `✅ <strong>سفارش ثبت شد!</strong><br>🎉 بررسی کن، توی اکسل و تلگرام نشست.`;
                 submitBtn.disabled = false;
             }
         }
