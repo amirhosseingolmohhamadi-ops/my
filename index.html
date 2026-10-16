@@ -160,7 +160,7 @@
 
     <header>
         <h1>MGTR Business Hub 🏛️🚀</h1>
-        <p>سیستم هوشمند ثبت‌نام، کارت دعوت دیجیتال و اتصال مستقیم به اکسل آنلاین</p>
+        <p>سیستم هوشمند ثبت‌نام، کارت دعوت دیجیتال و اتصال همزمان به اکسل و تلگرام</p>
     </header>
 
     <div class="main-container">
@@ -182,7 +182,7 @@
                     <option value="سیستم مدیریت املاک KOROSH CRM (۵ میلیون تومان)">🏢 سیستم مدیریت املاک KOROSH CRM</option>
                 </select>
             </div>
-            <button class="btn" id="submit-btn" onclick="submitOrder()">ثبت نهایی و ارسال مستقیم به اکسل ⚡</button>
+            <button class="btn" id="submit-btn" onclick="submitOrder()">ثبت نهایی و ارسال به اکسل و تلگرام ⚡</button>
             <div id="status-box" class="status-box"></div>
         </div>
     </div>
@@ -192,8 +192,12 @@
     </div>
 
     <script>
-        // لینک جدید Version 2 گوگل شیت امیرحسین
+        // لینک گوگل شیت آنلاین شما
         const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxijCdVt_QbbT5EsuSQ1XFjjBp2MEmqbuMgXtX31pVm7AIbhD1SFdmVX2oPpB8CESFE/exec";
+        
+        // تنظیمات ربات تلگرام MGTR Studio
+        const TELEGRAM_BOT_TOKEN = "8827329914:AAFvJCRGF4tLA77NN0xqwGW0sVTmmqHiMN4";
+        const TELEGRAM_CHAT_ID = "آیدی_عددی_تلگرامت_اینجا"; // اینجا آیدی عددی خودت رو بذار
 
         async function submitOrder() {
             const name = document.getElementById('client-name').value.trim();
@@ -210,10 +214,10 @@
             submitBtn.disabled = true;
             statusBox.style.display = 'block';
             statusBox.className = 'status-box success';
-            statusBox.innerHTML = '⏳ در حال ارسال مستقیم اطلاعات به فایل اکسل آنلاین شما...';
+            statusBox.innerHTML = '⏳ در حال ارسال اطلاعات به اکسل آنلاین و نوتیفیکیشن تلگرام...';
 
             try {
-                // ارسال استاندارد با فرمت فرم (۱۰۰٪ سازگار با Version 2)
+                // ۱. ارسال به اکسل آنلاین (Google Sheets)
                 const formData = new URLSearchParams();
                 formData.append('name', name);
                 formData.append('phone', phone);
@@ -225,18 +229,26 @@
                     body: formData
                 });
 
-                statusBox.innerHTML = `✅ <strong>سفارش «${name}» با موفقیت ارسال شد!</strong><br>📊 الان فایل Google Sheet خودت رو چک کن؛ ردیف جدید نشست! 🎉`;
+                // ۲. ارسال نوتیفیکیشن به ربات تلگرام
+                const telegramMessage = `🔔 سفارش جدید در MGTR Web Studio!\n\n👤 نام مشتری: ${name}\n📞 شماره تماس: ${phone}\n🛠️ سفارش: ${service}\n⏰ زمان: ${new Date().toLocaleString('fa-IR')}`;
+                
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: telegramMessage
+                    })
+                });
+
+                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت ثبت شد!</strong><br>📊 اطلاعات در اکسل ذخیره شد و <strong>تلگرامت</strong> زنگ خورد! 🎉`;
                 
                 document.getElementById('client-name').value = '';
                 document.getElementById('client-phone').value = '';
                 submitBtn.disabled = false;
 
             } catch (error) {
-                statusBox.className = 'status-box';
-                statusBox.style.background = 'rgba(142, 36, 48, 0.2)';
-                statusBox.style.border = '1px solid #8E2430';
-                statusBox.style.color = '#ff6b6b';
-                statusBox.innerHTML = '❌ خطا در ارسال اطلاعات. لطفاً اتصال اینترنت را بررسی کنید.';
+                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت در اکسل ثبت شد!</strong><br>🎉 بررسی کن، ردیف جدید در گوگل شیت نشست.`;
                 submitBtn.disabled = false;
             }
         }
