@@ -122,6 +122,11 @@
             box-shadow: 0 8px 25px rgba(197, 161, 91, 0.5);
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .status-box {
             margin-top: 15px;
             padding: 15px;
@@ -155,11 +160,10 @@
 
     <header>
         <h1>MGTR Business Hub 🏛️🚀</h1>
-        <p>سیستم هوشمند ثبت‌نام، کارت دعوت دیجیتال و اتصال مستقیم به اکسل و تلگرام</p>
+        <p>سیستم هوشمند ثبت‌نام، کارت دعوت دیجیتال و اتصال مستقیم به اکسل آنلاین</p>
     </header>
 
     <div class="main-container">
-        <!-- فرم ثبت سفارش و رزرو -->
         <div class="card">
             <h2>📝 ثبت سفارش مشتری / رزرو نوبت VIP</h2>
             <div class="form-group">
@@ -178,7 +182,7 @@
                     <option value="سیستم مدیریت املاک KOROSH CRM (۵ میلیون تومان)">🏢 سیستم مدیریت املاک KOROSH CRM</option>
                 </select>
             </div>
-            <button class="btn" onclick="submitOrder()">ثبت نهایی و ارسال به اکسل و تلگرام ⚡</button>
+            <button class="btn" id="submit-btn" onclick="submitOrder()">ثبت نهایی و ارسال مستقیم به اکسل ⚡</button>
             <div id="status-box" class="status-box"></div>
         </div>
     </div>
@@ -188,56 +192,40 @@
     </div>
 
     <script>
-        // اطلاعات ربات تلگرام و لینک وب‌سرویس اکسل آنلاین (Google Apps Script) خودت رو اینجا ست کن
-        const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN";
-        const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID";
-        const GOOGLE_SHEET_WEB_APP_URL = "YOUR_GOOGLE_SHEET_API_URL";
+        // لینک اختصاصی گوگل شیت امیرحسین (فعال شده!)
+        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby9Bf5taQBE19VolPC1WKzSHXMz_j9XH4xUs6vndWHHmhaqGo66IFIUNbAsASNWHhyd/exec";
 
         async function submitOrder() {
             const name = document.getElementById('client-name').value.trim();
             const phone = document.getElementById('client-phone').value.trim();
             const service = document.getElementById('client-service').value;
             const statusBox = document.getElementById('status-box');
+            const submitBtn = document.getElementById('submit-btn');
 
             if(!name || !phone) {
                 alert('لطفاً نام و شماره تماس رو کامل وارد کن رفیق!');
                 return;
             }
 
+            submitBtn.disabled = true;
             statusBox.style.display = 'block';
             statusBox.className = 'status-box success';
-            statusBox.innerHTML = '⏳ در حال ثبت اطلاعات در فایل اکسل آنلاین و ارسال نوتیفیکیشن به تلگرام...';
-
-            // متن پیام برای ارسال به تلگرام
-            const message = `🔔 سفارش جدید در استودیو MGTR!\n\n👤 مشتری: ${name}\n📞 تلفن: ${phone}\n🛠️ خدمت: ${service}\n⏰ زمان: ${new Date().toLocaleString('fa-IR')}`;
+            statusBox.innerHTML = '⏳ در حال ارسال مستقیم اطلاعات به فایل اکسل آنلاین شما...';
 
             try {
-                // ۱. ارسال درخواست به تلگرام (اختیاری در صورت تنظیم توکن)
-                /*
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message })
-                });
-                */
-
-                // ۲. ارسال داده‌ها به گوگل شیت (اکسل آنلاین) با استفاده از Fetch
-                /*
+                // ارسال واقعی داده‌ها به گوگل شیت
                 await fetch(GOOGLE_SHEET_WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, service })
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ name: name, phone: phone, service: service })
                 });
-                */
 
-                // شبیه‌سازی موفقیت‌آمیز عملیات برای نمایش سریع به کاربر
-                setTimeout(() => {
-                    statusBox.innerHTML = `✅ <strong>سفارش با موفقیت ثبت شد!</strong><br>📊 اطلاعات در <strong>اکسل آنلاین</strong> ذخیره شد و زنگ <strong>تلگرام</strong> به صدا درآمد! 🎉<br><small style="color:var(--gold)">به زودی برای نهایی‌سازی با مشتری تماس گرفته می‌شود.</small>`;
-                    
-                    document.getElementById('client-name').value = '';
-                    document.getElementById('client-phone').value = '';
-                }, 1000);
+                statusBox.innerHTML = `✅ <strong>سفارش «${name}» با موفقیت ثبت شد!</strong><br>📊 همین الان فایل Google Sheet خودت رو باز کن؛ یک ردیف جدید اضافه شد! 🎉`;
+                
+                document.getElementById('client-name').value = '';
+                document.getElementById('client-phone').value = '';
+                submitBtn.disabled = false;
 
             } catch (error) {
                 statusBox.className = 'status-box';
@@ -245,6 +233,7 @@
                 statusBox.style.border = '1px solid #8E2430';
                 statusBox.style.color = '#ff6b6b';
                 statusBox.innerHTML = '❌ خطا در ارسال اطلاعات. لطفاً اتصال اینترنت را بررسی کنید.';
+                submitBtn.disabled = false;
             }
         }
     </script>
