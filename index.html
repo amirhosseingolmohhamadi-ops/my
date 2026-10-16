@@ -192,12 +192,12 @@
     </div>
 
     <script>
-        // لینک گوگل شیت آنلاین شما
+        // لینک اکسل آنلاین گوگل شیت شما
         const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxijCdVt_QbbT5EsuSQ1XFjjBp2MEmqbuMgXtX31pVm7AIbhD1SFdmVX2oPpB8CESFE/exec";
         
-        // تنظیمات ربات تلگرام MGTR Studio
+        // تنظیمات قطعی ربات تلگرام و آیدی عددی امیرحسین
         const TELEGRAM_BOT_TOKEN = "8827329914:AAFvJCRGF4tLA77NN0xqwGW0sVTmmqHiMN4";
-        const TELEGRAM_CHAT_ID = "آیدی_عددی_تلگرامت_اینجا"; // اینجا آیدی عددی خودت رو بذار
+        const TELEGRAM_CHAT_ID = "7255359815";
 
         async function submitOrder() {
             const name = document.getElementById('client-name').value.trim();
@@ -248,7 +248,7 @@
                 submitBtn.disabled = false;
 
             } catch (error) {
-                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت در اکسل ثبت شد!</strong><br>🎉 بررسی کن، ردیف جدید در گوگل شیت نشست.`;
+                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت ثبت شد!</strong><br>🎉 بررسی کن، ردیف جدید در گوگل شیت نشست.`;
                 submitBtn.disabled = false;
             }
         }
