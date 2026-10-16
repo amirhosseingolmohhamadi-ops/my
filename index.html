@@ -145,10 +145,11 @@
                     statusBox.className = 'status-box error-msg';
                     statusBox.innerHTML = `❌ <strong>کد تایید اشتباه است!</strong> لطفاً کد صحیح ارسال شده توسط ربات را وارد کنید.`;
                 }
-            } catch (err) {
-                statusBox.className = 'status-box error-msg';
-                statusBox.innerHTML = '❌ خطا در برقراری ارتباط با سرور!';
-            }
+          catch (err) {
+        statusBox.className = 'status-box error-msg';
+        statusBox.innerHTML = '❌ خطا در ارتباط با سرور: ' + err.message;
+        console.error(err);
+    }
         }
     </script>
 </body>
