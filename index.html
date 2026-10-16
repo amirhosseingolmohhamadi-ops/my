@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+# Let's generate a completely clean and perfect index.html file and use file_gen or the proper tag format.
+html_code = """<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -216,3 +217,9 @@
     </script>
 </body>
 </html>
+"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_code)
+
+print("Generated index.html successfully.")
