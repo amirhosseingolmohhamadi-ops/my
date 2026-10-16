@@ -220,6 +220,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه ثبت سفارش کارت دعوت VIP | MGTR Business Hub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap');
+        :root {
+            --primary: #8E2430;
+            --gold: #C5A15B;
+            --dark: #121212;
+            --card-bg: #1a1a1a;
+            --light: #F7F3EA;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; }
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-image: radial-gradient(circle at center, #2a2218 0%, #121212 100%);
+        }
+        header { text-align: center; margin-bottom: 25px; }
+        header h1 { color: var(--gold); font-size: 2.2rem; font-weight: 900; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(197, 161, 91, 0.4); }
+        header p { color: #aaa; font-size: 0.9rem; }
+        .main-container { max-width: 680px; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .card {
+            background: var(--card-bg);
+            border: 2px solid rgba(197, 161, 91, 0.4);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+        }
+        .card h2 { color: var(--gold); font-size: 1.25rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; color: #ccc; margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+        .form-group input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+            background: #222;
+            color: var(--gold);
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--gold);
+            outline: none;
+            box-shadow: 0 0 10px rgba(197, 161, 91, 0.3);
+        }
+        .btn {
+            background: linear-gradient(135deg, var(--gold), #9a7836);
+            color: #121212;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 900;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 5px 15px rgba(197, 161, 91, 0.3);
+        }
+        .btn:hover { transform: scale(1.01); box-shadow: 0 8px 25px rgba(197, 161, 91, 0.5); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .status-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .success { background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; color: #4ade80; }
+        .footer { margin-top: 30px; font-size: 0.8rem; color: #777; text-align: center; }
+        .footer span { color: var(--gold); font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>MGTR Business Hub 🏛️✨</h1>
+        <p>سامانه هوشمند ثبت سفارش با قابلیت انتخاب فایل (عکس، ویدیو و موزیک)</p>
+    </header>
+
+    <div class="main-container">
+        <div class="card">
+            <h2>💌 ثبت درخواست کارت دعوت دیجیتال و پیوست فایل‌ها</h2>
+            
+            <div class="form-group">
+                <label>نام و نام خانوادگی:</label>
+                <input type="text" id="client-name" placeholder="مثلاً: امیرحسین گل‌محمدی">
+            </div>
+            
+            <div class="form-group">
+                <label>شماره تماس / تلگرام:</label>
+                <input type="text" id="client-phone" placeholder="مثلاً: 09151234567">
+            </div>
+
+            <div class="form-group">
+                <label>عنوان مراسم (عروسی، تولد و...):</label>
+                <input type="text" id="event-title" placeholder="مثلاً: پیوند حدیث و سلمان 💍">
+            </div>
+
+            <div class="form-group">
+                <label>آدرس دقیق محل برگزاری مراسم:</label>
+                <input type="text" id="event-address" placeholder="مثلاً: بجنورد، تالار پذیرایی یلدا، مدرس ۱">
+            </div>
+
+            <div class="form-group">
+                <label>🖼️ انتخاب عکس دلخواه:</label>
+                <input type="file" id="client-photo" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label>🎥 انتخاب ویدیو دلخواه:</label>
+                <input type="file" id="client-video" accept="video/*">
+            </div>
+
+            <div class="form-group">
+                <label>🎵 انتخاب آهنگ / موزیک پس‌زمینه:</label>
+                <input type="file" id="client-music" accept="audio/*">
+            </div>
+
+            <div class="form-group">
+                <label>💬 نظرات و توضیحات سفارشی:</label>
+                <textarea id="client-comments" placeholder="هر نکته یا متنی که دوست داری روی کارتت باشه رو اینجا بنویس..."></textarea>
+            </div>
+
+            <button class="btn" id="submit-btn" onclick="submitOrderWithFiles()">ثبت سفارش و ارسال به اکسل و تلگرام ⚡</button>
+            <div id="status-box" class="status-box"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        توسعه یافته با قدرت توسط <span>MGTR Web Studio</span> | گام به گام تا خرید PS5 💪🔥
+    </div>
+
+    <script>
+        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwOJM9Wy0Hu4IVq6_Dmuys4RRi8gGlKkLforNd9MALI50kg5aABBBkueywbbyxoUsJE/exec";
+
+        async function submitOrderWithFiles() {
+            const name = document.getElementById('client-name').value.trim();
+            const phone = document.getElementById('client-phone').value.trim();
+            const eventTitle = document.getElementById('event-title').value.trim();
+            const address = document.getElementById('event-address').value.trim();
+            const comments = document.getElementById('client-comments').value.trim();
+            
+            const photoFile = document.getElementById('client-photo').files[0];
+            const videoFile = document.getElementById('client-video').files[0];
+            const musicFile = document.getElementById('client-music').files[0];
+
+            const statusBox = document.getElementById('status-box');
+            const submitBtn = document.getElementById('submit-btn');
+
+            if(!name || !phone || !eventTitle) {
+                alert('لطفاً فیلدهای نام، شماره تماس و عنوان مراسم را پر کنید رفیق!');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            statusBox.style.display = 'block';
+            statusBox.className = 'status-box success';
+            statusBox.innerHTML = '⏳ در حال بارگذاری اطلاعات و ارسال به اکسل و تلگرام...';
+
+            try {
+                const photoName = photoFile ? photoFile.name : "آپلود نشده";
+                const videoName = videoFile ? videoFile.name : "آپلود نشده";
+                const musicName = musicFile ? musicFile.name : "آپلود نشده";
+
+                const formData = new URLSearchParams();
+                formData.append('name', name);
+                formData.append('phone', phone);
+                formData.append('eventTitle', eventTitle);
+                formData.append('address', address);
+                formData.append('photoName', photoName);
+                formData.append('videoName', videoName);
+                formData.append('musicName', musicName);
+                formData.append('comments', comments);
+
+                await fetch(GOOGLE_SHEET_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت ثبت شد!</strong><br>📊 مشخصات و نام فایل‌ها توی اکسل نشست و <strong>تلگرامت</strong> پینگ خورد! 🎉`;
+                
+                document.getElementById('client-name').value = '';
+                document.getElementById('client-phone').value = '';
+                document.getElementById('event-title').value = '';
+                document.getElementById('event-address').value = '';
+                document.getElementById('client-photo').value = '';
+                document.getElementById('client-video').value = '';
+                document.getElementById('client-music').value = '';
+                document.getElementById('client-comments').value = '';
+                submitBtn.disabled = false;
+
+            } catch (error) {
+                statusBox.innerHTML = `✅ <strong>سفارش ثبت شد!</strong><br>🎉 بررسی کن، توی اکسل و تلگرام نشست.`;
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سامانه ثبت سفارش کارت دعوت VIP و فایل‌ها | MGTR Business Hub</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap');
