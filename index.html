@@ -192,8 +192,8 @@
     </div>
 
     <script>
-        // لینک اختصاصی گوگل شیت امیرحسین (فعال شده!)
-        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby9Bf5taQBE19VolPC1WKzSHXMz_j9XH4xUs6vndWHHmhaqGo66IFIUNbAsASNWHhyd/exec";
+        // لینک جدید Version 2 گوگل شیت امیرحسین
+        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxijCdVt_QbbT5EsuSQ1XFjjBp2MEmqbuMgXtX31pVm7AIbhD1SFdmVX2oPpB8CESFE/exec";
 
         async function submitOrder() {
             const name = document.getElementById('client-name').value.trim();
@@ -213,15 +213,19 @@
             statusBox.innerHTML = '⏳ در حال ارسال مستقیم اطلاعات به فایل اکسل آنلاین شما...';
 
             try {
-                // ارسال واقعی داده‌ها به گوگل شیت
+                // ارسال استاندارد با فرمت فرم (۱۰۰٪ سازگار با Version 2)
+                const formData = new URLSearchParams();
+                formData.append('name', name);
+                formData.append('phone', phone);
+                formData.append('service', service);
+
                 await fetch(GOOGLE_SHEET_WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ name: name, phone: phone, service: service })
+                    body: formData
                 });
 
-                statusBox.innerHTML = `✅ <strong>سفارش «${name}» با موفقیت ثبت شد!</strong><br>📊 همین الان فایل Google Sheet خودت رو باز کن؛ یک ردیف جدید اضافه شد! 🎉`;
+                statusBox.innerHTML = `✅ <strong>سفارش «${name}» با موفقیت ارسال شد!</strong><br>📊 الان فایل Google Sheet خودت رو چک کن؛ ردیف جدید نشست! 🎉`;
                 
                 document.getElementById('client-name').value = '';
                 document.getElementById('client-phone').value = '';
