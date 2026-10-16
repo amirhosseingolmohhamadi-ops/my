@@ -1,4 +1,48 @@
-<!DOCTYPE html>
+function doPost(e) {
+  try {
+    var params = e.parameter;
+    var action = params.action;
+    var token = "8827329914:AAFvJCRGF4tLA77NN0xqwGW0sVTmmqHiMN4";
+
+    if (action === "send_telegram_code") {
+      var chatId = params.chatId;
+      var code = Math.floor(1000 + Math.random() * 9000);
+      
+      PropertiesService.getScriptProperties().setProperty(chatId.toString(), code.toString());
+
+      var message = "🔐 کد تایید ورود به سامانه MGTR:\n\n" + code + "\n\nاین کد را در سایت وارد کنید.";
+      var url = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(message);
+      
+      UrlFetchApp.fetch(url, {muteHttpExceptions: true});
+      return ContentService.createTextOutput("CodeSent");
+    } 
+    
+    else if (action === "verify_and_login") {
+      var chatId = params.chatId;
+      var userCode = params.code;
+      var service = params.service;
+      var savedCode = PropertiesService.getScriptProperties().getProperty(chatId.toString());
+
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+      var date = new Date().toLocaleString('fa-IR');
+
+      if (savedCode && savedCode === userCode) {
+        sheet.appendRow([chatId, service, "تایید شده", date]);
+
+        var adminChatId = "7255359815"; 
+        var adminMsg = "🔔 ورود موفق با تلگرام!\n\n🆔 چت‌آیدی: " + chatId + "\n🛠️ خدمت: " + service + "\n⏰ زمان: " + date;
+        var adminUrl = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminChatId + "&text=" + encodeURIComponent(adminMsg);
+        UrlFetchApp.fetch(adminUrl);
+
+        return ContentService.createTextOutput("Success");
+      } else {
+        return ContentService.createTextOutput("WrongCode");
+      }
+    }
+  } catch (err) {
+    return ContentService.createTextOutput("Error: " + err.message);
+  }
+}<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
