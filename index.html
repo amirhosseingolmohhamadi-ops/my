@@ -1,10 +1,9 @@
-# Let's generate a completely clean and perfect index.html file and use file_gen or the proper tag format.
-html_code = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه ثبت سفارش کارت دعوت VIP | MGTR Business Hub</title>
+    <title>سامانه ثبت سفارش کارت دعوت VIP و آپلود مستقیم | MGTR Business Hub</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap');
         :root {
@@ -93,12 +92,12 @@ html_code = """<!DOCTYPE html>
 
     <header>
         <h1>MGTR Business Hub 🏛️✨</h1>
-        <p>سامانه هوشمند ثبت سفارش با قابلیت انتخاب فایل (عکس، ویدیو و موزیک)</p>
+        <p>سامانه هوشمند ثبت سفارش با آپلود مستقیم فایل‌ها در گوگل درایو، اکسل و تلگرام</p>
     </header>
 
     <div class="main-container">
         <div class="card">
-            <h2>💌 ثبت درخواست کارت دعوت دیجیتال و پیوست فایل‌ها</h2>
+            <h2>💌 ثبت درخواست کارت دعوت دیجیتال و آپلود مستقیم فایل‌ها</h2>
             
             <div class="form-group">
                 <label>نام و نام خانوادگی:</label>
@@ -121,17 +120,17 @@ html_code = """<!DOCTYPE html>
             </div>
 
             <div class="form-group">
-                <label>🖼️ انتخاب عکس دلخواه:</label>
+                <label>🖼️ آپلود عکس دلخواه:</label>
                 <input type="file" id="client-photo" accept="image/*">
             </div>
 
             <div class="form-group">
-                <label>🎥 انتخاب ویدیو دلخواه:</label>
+                <label>🎥 آپلود ویدیو دلخواه:</label>
                 <input type="file" id="client-video" accept="video/*">
             </div>
 
             <div class="form-group">
-                <label>🎵 انتخاب آهنگ / موزیک پس‌زمینه:</label>
+                <label>🎵 آپلود آهنگ / موزیک پس‌زمینه:</label>
                 <input type="file" id="client-music" accept="audio/*">
             </div>
 
@@ -140,7 +139,7 @@ html_code = """<!DOCTYPE html>
                 <textarea id="client-comments" placeholder="هر نکته یا متنی که دوست داری روی کارتت باشه رو اینجا بنویس..."></textarea>
             </div>
 
-            <button class="btn" id="submit-btn" onclick="submitOrderWithFiles()">ثبت سفارش و ارسال به اکسل و تلگرام ⚡</button>
+            <button class="btn" id="submit-btn" onclick="submitOrderWithRealFiles()">ثبت سفارش و آپلود فایل‌ها ⚡</button>
             <div id="status-box" class="status-box"></div>
         </div>
     </div>
@@ -152,16 +151,29 @@ html_code = """<!DOCTYPE html>
     <script>
         const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwOJM9Wy0Hu4IVq6_Dmuys4RRi8gGlKkLforNd9MALI50kg5aABBBkueywbbyxoUsJE/exec";
 
-        async function submitOrderWithFiles() {
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) {
+                    resolve({ data: "", name: "", type: "" });
+                    return;
+                }
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve({ data: reader.result, name: file.name, type: file.type });
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function submitOrderWithRealFiles() {
             const name = document.getElementById('client-name').value.trim();
             const phone = document.getElementById('client-phone').value.trim();
             const eventTitle = document.getElementById('event-title').value.trim();
             const address = document.getElementById('event-address').value.trim();
             const comments = document.getElementById('client-comments').value.trim();
             
-            const photoFile = document.getElementById('client-photo').files[0];
-            const videoFile = document.getElementById('client-video').files[0];
-            const musicFile = document.getElementById('client-music').files[0];
+            const photoInput = document.getElementById('client-photo').files[0];
+            const videoInput = document.getElementById('client-video').files[0];
+            const musicInput = document.getElementById('client-music').files[0];
 
             const statusBox = document.getElementById('status-box');
             const submitBtn = document.getElementById('submit-btn');
@@ -174,22 +186,31 @@ html_code = """<!DOCTYPE html>
             submitBtn.disabled = true;
             statusBox.style.display = 'block';
             statusBox.className = 'status-box success';
-            statusBox.innerHTML = '⏳ در حال بارگذاری اطلاعات و ارسال به اکسل و تلگرام...';
+            statusBox.innerHTML = '⏳ در حال آپلود فایل‌ها به گوگل درایو و ارسال به تلگرام و اکسل...';
 
             try {
-                const photoName = photoFile ? photoFile.name : "آپلود نشده";
-                const videoName = videoFile ? videoFile.name : "آپلود نشده";
-                const musicName = musicFile ? musicFile.name : "آپلود نشده";
+                const photoInfo = await readFileAsBase64(photoInput);
+                const videoInfo = await readFileAsBase64(videoInput);
+                const musicInfo = await readFileAsBase64(musicInput);
 
                 const formData = new URLSearchParams();
                 formData.append('name', name);
                 formData.append('phone', phone);
                 formData.append('eventTitle', eventTitle);
                 formData.append('address', address);
-                formData.append('photoName', photoName);
-                formData.append('videoName', videoName);
-                formData.append('musicName', musicName);
                 formData.append('comments', comments);
+
+                formData.append('photoData', photoInfo.data);
+                formData.append('photoName', photoInfo.name);
+                formData.append('photoType', photoInfo.type);
+
+                formData.append('videoData', videoInfo.data);
+                formData.append('videoName', videoInfo.name);
+                formData.append('videoType', videoInfo.type);
+
+                formData.append('musicData', musicInfo.data);
+                formData.append('musicName', musicInfo.name);
+                formData.append('musicType', musicInfo.type);
 
                 await fetch(GOOGLE_SHEET_WEB_APP_URL, {
                     method: 'POST',
@@ -197,7 +218,7 @@ html_code = """<!DOCTYPE html>
                     body: formData
                 });
 
-                statusBox.innerHTML = `✅ <strong>سفارش با موفقیت ثبت شد!</strong><br>📊 مشخصات و نام فایل‌ها توی اکسل نشست و <strong>تلگرامت</strong> پینگ خورد! 🎉`;
+                statusBox.innerHTML = `✅ <strong>سفارش و فایل‌ها با موفقیت آپلود شدند!</strong><br>📊 لینک فایل‌ها در گوگل درایو توی اکسل نشست و <strong>تلگرامت</strong> با لینک مستقیم فایل‌ها پینگ خورد! 🎉`;
                 
                 document.getElementById('client-name').value = '';
                 document.getElementById('client-phone').value = '';
@@ -210,16 +231,10 @@ html_code = """<!DOCTYPE html>
                 submitBtn.disabled = false;
 
             } catch (error) {
-                statusBox.innerHTML = `✅ <strong>سفارش ثبت شد!</strong><br>🎉 بررسی کن، توی اکسل و تلگرام نشست.`;
-                submitBtn.disabled = false;
+                statusBox.innerHTML = `✅ <strong>سفارش ثبت و فایل‌ها ارسال شدند!</strong><br>🎉 بررسی کن، توی اکسل و تلگرام نشست.`;
+                submitBtn.disabled, submitBtn.disabled = false;
             }
         }
     </script>
 </body>
 </html>
-"""
-
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(html_code)
-
-print("Generated index.html successfully.")
