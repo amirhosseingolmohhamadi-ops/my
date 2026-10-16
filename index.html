@@ -29,7 +29,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            justify-content: space-between;
+            padding: 25px 15px;
             background-image: radial-gradient(circle at center, #2a2218 0%, #121212 100%);
         }
 
@@ -192,8 +193,7 @@
     </div>
 
     <script>
-        // لینک گوگل شیت آنلاین شما
-        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxijCdVt_QbbT5EsuSQ1XFjjBp2MEmqbuMgXtX31pVm7AIbhD1SFdmVX2oPpB8CESFE/exec";
+        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx_dDfU4I-yjtmHZ2ozbNuLqzyseY9TS7T4HrnUFeCpop0F1ljjPJx5mDOr8T4L2zL1/exec";
 
         async function submitOrder() {
             const name = document.getElementById('client-name').value.trim();
@@ -218,7 +218,6 @@
                 formData.append('phone', phone);
                 formData.append('service', service);
 
-                // ارسال به سرور گوگل (که همزمان اکسل رو پر می‌کنه و هم پیام تلگرام رو می‌فرسته)
                 await fetch(GOOGLE_SHEET_WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
